@@ -157,3 +157,25 @@ resource "azurerm_resource_group" "tags" {
 output "tags" {
   value = azurerm_resource_group.tags.tags
 }
+
+resource "azurerm_resource_group" "manual" {
+  name     = "manual"
+  location = local.location
+  tags = {
+    bar = "bb"
+  }
+}
+
+resource "azurerm_storage_account" "xxx" {
+  name                             = "xxx546456"
+  resource_group_name              = azurerm_resource_group.eon.name
+  location                         = azurerm_resource_group.eon.location
+  account_tier                     = "Standard"
+  account_replication_type         = "LRS"
+  allow_nested_items_to_be_public  = false
+  cross_tenant_replication_enabled = false
+  enable_https_traffic_only        = false
+  min_tls_version                  = "TLS1_0"
+  sftp_enabled                     = true
+  is_hns_enabled                   = true
+}
