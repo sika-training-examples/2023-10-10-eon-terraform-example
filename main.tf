@@ -41,7 +41,7 @@ resource "azurerm_resource_group" "eon" {
   location = local.location
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -129,4 +129,13 @@ locals {
 
 output "name" {
   value = local.resorce_group_hello_name
+}
+
+resource "azurerm_resource_group" "eon-delete" {
+  name     = "eon-ondrej-delete"
+  location = local.location
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
