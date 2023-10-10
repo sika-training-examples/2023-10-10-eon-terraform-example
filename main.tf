@@ -22,6 +22,10 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "eon" {
-  name     = "eon"
+  name     = "eon-ondrej"
   location = "westeurope"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
