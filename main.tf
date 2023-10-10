@@ -9,7 +9,7 @@ terraform {
       version = "3.5.1"
     }
   }
-  backend "http" {}
+  backend "local" {}
 }
 
 variable "azurerm_client_id" {}
