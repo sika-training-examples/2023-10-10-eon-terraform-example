@@ -1,0 +1,24 @@
+GITLAB_DOMAIN=gitlab.sikademo.com
+GITLAB_TOKEN=5Q8kmmWNPafjBhod9kNA
+CI_PROJECT_ID=2
+
+upload-net:
+	make _upload \
+		TERRAFORM_MODULE_NAME=net \
+		TERRAFORM_MODULE_SYSTEM=azure \
+		TERRAFORM_MODULE_DIR=net
+
+upload-vm:
+	make _upload \
+		TERRAFORM_MODULE_NAME=vm \
+		TERRAFORM_MODULE_SYSTEM=azure \
+		TERRAFORM_MODULE_DIR=vm
+
+_upload:
+ifndef TERRAFORM_MODULE_VERSION
+	$(error TERRAFORM_MODULE_VERSION is undefined)
+endif
+	tar -vczf /tmp/${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz -C ${TERRAFORM_MODULE_DIR} .
+	curl --fail-with-body --location --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+		--upload-file /tmp/${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz \
+		https://${GITLAB_DOMAIN}/api/v4/projects/${CI_PROJECT_ID}/packages/terraform/modules/${TERRAFORM_MODULE_NAME}/${TERRAFORM_MODULE_SYSTEM}/${TERRAFORM_MODULE_VERSION}/file
