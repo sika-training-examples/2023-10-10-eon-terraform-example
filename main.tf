@@ -65,3 +65,49 @@ output "storage_account_access_keys" {
   }
   sensitive = true
 }
+
+resource "azurerm_storage_container" "bar" {
+  # for_each = { for i in range(0, 5) : tostring(i) => null }
+  for_each = toset([
+    "1",
+    "2",
+    "4",
+  ])
+
+  name                  = "bar${each.key}"
+  storage_account_name  = azurerm_storage_account.bar.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "bar2" {
+  for_each = {
+    aaa = true
+    bbb = false
+  }
+
+  name                  = "bar2-${each.key}"
+  storage_account_name  = azurerm_storage_account.bar.name
+  container_access_type = each.value ? "blob" : "private"
+}
+
+resource "azurerm_storage_container" "bar3" {
+  for_each = {
+    aaa = {
+      access_type = "blob"
+      metadata = {
+        name = "aaa"
+      }
+    }
+    bbb = {
+      access_type = "container"
+      metadata = {
+        name = "bbb"
+      }
+    }
+  }
+
+  name                  = "bar3-${each.key}"
+  storage_account_name  = azurerm_storage_account.bar.name
+  container_access_type = each.value.access_type
+  metadata              = each.value.metadata
+}
