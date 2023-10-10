@@ -111,3 +111,22 @@ resource "azurerm_storage_container" "bar3" {
   container_access_type = each.value.access_type
   metadata              = each.value.metadata
 }
+
+locals {
+  enabled = true
+}
+
+resource "azurerm_resource_group" "hello" {
+  count = local.enabled ? 1 : 0
+
+  name     = "eon-hello"
+  location = local.location
+}
+
+locals {
+  resorce_group_hello_name = length(azurerm_resource_group.hello) == 1 ? azurerm_resource_group.hello[0].name : null
+}
+
+output "name" {
+  value = local.resorce_group_hello_name
+}
