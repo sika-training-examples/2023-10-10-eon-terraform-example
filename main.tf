@@ -9,6 +9,7 @@ terraform {
       version = "3.5.1"
     }
   }
+  backend "http" {}
 }
 
 variable "azurerm_client_id" {}
@@ -138,4 +139,21 @@ resource "azurerm_resource_group" "eon-delete" {
   lifecycle {
     prevent_destroy = false
   }
+}
+
+resource "azurerm_resource_group" "tags" {
+  name     = "eon-tags"
+  location = local.location
+  tags = {
+    org     = "eon"
+    dep     = "basement"
+    created = timestamp()
+  }
+  lifecycle {
+    ignore_changes = [tags]
+  }
+}
+
+output "tags" {
+  value = azurerm_resource_group.tags.tags
 }
